@@ -26,7 +26,9 @@
     "fs": "^0.0.1-security",
     "moment": "^2.29.4",
     "nodemon": "^2.0.20",
+    "perf_hooks": "^0.0.1",
     "pg": "^8.8.0",
+    "pg-essential": "^1.0.2",
     "uninstall": "^0.0.0"
   }
 }
