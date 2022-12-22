@@ -22,8 +22,12 @@ CREATE TABLE IF NOT EXISTS answers(
   answerer_name VARCHAR(50),
   answerer_email VARCHAR(100),
   reported int,
-  helpful int,
-  CONSTRAINT fk_question
-    FOREIGN KEY(question_id)
-      REFERENCES questions(id)
+  helpful int
+);
+
+
+CREATE TABLE IF NOT EXISTS photos(
+  id SERIAL PRIMARY KEY,
+  answer_id int,
+  url VARCHAR(255)
 )

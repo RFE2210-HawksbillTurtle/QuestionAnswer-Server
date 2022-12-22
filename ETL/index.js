@@ -58,6 +58,25 @@ const getAllAnswers =  (x) => {
   })
 }
 
+const getAllPhotos =  (x) => {
+  let data = []
+  return new Promise((resolve, reject) => {
+    log(`[${x}] Started E&T - Photos`, 'yellow')
+    fs.createReadStream('../old/answers_photos.csv')
+      .on('error', (err) => {
+        reject(err);
+      })
+      .pipe(csv())
+      .on('data', async (row) => {
+         data.push(row);
+      })
+      .on('end', () => {
+        resolve(data)
+        data = null;
+      })
+  })
+}
+
 
 const bulkInsert = async (arr, columns, table, x) => {
   log(`[${x}] Started Loading - ${table}`, 'yellow')
@@ -115,11 +134,32 @@ const startEtlPipeline = async (x) => {
       log(e, 'error');
       process.exit()
     }
+  } else if (x === 2) {
+    try {
+      startTime = performance.now();
+      let photos = await getAllPhotos(x);
+      endTime = performance.now();
+      date = new Date(endTime-startTime);
+      log(`[${x}] E&T complete - Photos! Time Taken: ${date.getMinutes()}:${date.getSeconds()}s`, 'success');
+
+      startTime = performance.now();
+      let columns = ['answer_id', 'url'];
+      let insert = await bulkInsert(photos.slice(0, (photos.length / 2)), columns, 'photos', x);
+
+      if (insert) {
+        endTime = performance.now();
+        date = new Date(endTime-startTime)
+        log(`[${x}] Load complete - Photos! | Time Taken: ${date.getMinutes()}:${date.getSeconds()}s`, 'success');
+      }
+    } catch (e) {
+      log(e, 'error');
+      process.exit()
+    }
   }
 }
 
 let stack = [];
-for (let i = 0; i < 2; i++) {
+for (let i = 0; i < 3; i++) {
   stack.push(startEtlPipeline(i))
 }
 async.each(stack, (res, err)  => {
