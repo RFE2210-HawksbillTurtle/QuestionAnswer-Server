@@ -6,6 +6,7 @@ const sequelize = require('./util/database.js');
 
 
 
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
@@ -13,6 +14,7 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST');
   next();
 });
+
 
 app.use('/qa/questions', require('./routes/questions.js'));
 
@@ -22,6 +24,7 @@ app.use('/qa/questions', require('./routes/questions.js'));
 (async () => {
 
   try {
+    // await sequelize.authenticate();
     await sequelize.sync(
       {force: false}
     )

@@ -4,7 +4,8 @@ const router = require('express').Router();
 
 //CRUD
 router
-   .get('/:product_id', controller.getAll);
+   .get('/:product_id', controller.getAllQs)
+   .get('/:question_id/answers', controller.getAllAnswers);
 
 
 
