@@ -71,12 +71,15 @@ exports.addOneAnswer = async (req, res, next) => {
         helpful: 0
       }, { transaction: t });
 
-      let arr = [];
-      for (let i = 0; i < req.body.photos.length; i++) {
-        arr.push({answer_id: answer.dataValues.id, url: req.body.photos[i]})
-      }
+      if (req.body.photos.length > 0) {
+        let arr = [];
+        for (let i = 0; i < req.body.photos.length; i++) {
+          arr.push({answer_id: answer.dataValues.id, url: req.body.photos[i]})
+        }
 
-      await Photos.bulkCreate(arr, { transaction: t });
+        await Photos.bulkCreate(arr, { transaction: t });
+
+      }
     })
 
     console.log('Successfully added one answer to the database');
