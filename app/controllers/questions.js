@@ -89,3 +89,20 @@ exports.addOneAnswer = async (req, res, next) => {
     return res.status(500).json(err);
   }
 }
+
+exports.markQuestionHelpful = async (req, res, next) => {
+  try {
+    await Question.update({
+      helpful: sequelize.literal('helpful + 1')
+      },
+      {
+        where: {
+          id: req.params.question_id
+        }
+    });
+    console.log('Successfully marked question as helpful');
+    return res.status(204).end();
+  } catch (err) {
+    return res.status(500).json(err)
+  }
+}
