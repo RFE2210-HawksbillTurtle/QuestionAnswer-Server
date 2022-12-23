@@ -53,3 +53,23 @@ exports.addOneQuestion = async (req, res, next) => {
     return res.status(500).json(err);
   }
 }
+
+exports.addOneAnswer = async (req, res, next) => {
+  let date = Date.now();
+  try {
+    const question = await Question.create({
+      product_id: req.body.product_id,
+      body: req.body.body,
+      date_written: date,
+      asker_name: req.body.name,
+      asker_email: req.body.email,
+      reported: 0,
+      helpful: 0
+
+    });
+    console.log('Successfully added one question to the database');
+    return res.status(201).json(question);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+}

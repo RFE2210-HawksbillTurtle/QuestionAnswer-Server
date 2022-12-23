@@ -6,7 +6,8 @@ const router = require('express').Router();
 router
    .get('/:product_id', controller.getAllQs)
    .get('/:question_id/answers', controller.getAllAnswers)
-   .post('/', controller.addOneQuestion);
+   .post('/', controller.addOneQuestion)
+   .post('/:question_id/answers', controller.addOneAnswer);
 
 
 module.exports = router;
