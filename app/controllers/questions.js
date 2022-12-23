@@ -1,6 +1,7 @@
 const Question = require('../models/questions');
 const Answers = require('../models/answers');
 const Photos = require('../models/photos');
+const sequelize = require('../util/database');
 
 exports.getAllQs = async (req, res, next) => {
   try {
@@ -56,20 +57,32 @@ exports.addOneQuestion = async (req, res, next) => {
 }
 
 exports.addOneAnswer = async (req, res, next) => {
-  let date = Date.now();
+  let date = Date.now()
   try {
-    const answer = await Answers.create({
-      question_id: req.params.question_id,
-      body: req.body.body,
-      date_written: date,
-      answerer_name: req.body.name,
-      answerer_email: req.body.email,
-      reported: 0,
-      helpful: 0
-    });
+    const result = await sequelize.transaction(async (t) => {
+
+      const answer = await Answers.create({
+        question_id: req.params.question_id,
+        body: req.body.body,
+        date_written: date,
+        answerer_name: req.body.name,
+        answerer_email: req.body.email,
+        reported: 0,
+        helpful: 0
+      }, { transaction: t });
+
+      let arr = [];
+      for (let i = 0; i < req.body.photos.length; i++) {
+        arr.push({answer_id: answer.dataValues.id, url: req.body.photos[i]})
+      }
+
+      await Photos.bulkCreate(arr, { transaction: t });
+    })
+
     console.log('Successfully added one answer to the database');
-    return res.status(201).json(question);
+    return res.status(201).json(result);
   } catch (err) {
+    console.log(err)
     return res.status(500).json(err);
   }
 }
