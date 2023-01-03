@@ -143,21 +143,3 @@ exports.reportQuestion = async (req, res, next) => {
   }
 }
 
-exports.markAnswerHelpful = async (req, res, next) => {
-  try {
-
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json(err);
-  }
-}
-
-
-exports.reportAnswer = async (req, res, next) => {
-  try {
-
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json(err);
-  }
-}
