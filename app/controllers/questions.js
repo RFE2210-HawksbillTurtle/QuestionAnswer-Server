@@ -3,17 +3,28 @@ const Answers = require('../models/answers');
 const Photos = require('../models/photos');
 const sequelize = require('../util/database');
 
+
+
 exports.getAllQs = async (req, res, next) => {
   try {
+    const { page, count } = req.query;
     const ALL = await Question.findAll({
+      limit: count,
+      offset: page,
       where: {
         product_id: Number(req.params.product_id)
       },
       raw: true
     });
 
+
+    ALL.filter((question) => {
+      question.reported === 0;
+    })
+
     return res.status(200).json({
-      
+      product_id: req.params.product_id,
+      results: ALL
     });
   } catch (err) {
     console.log(err.message)
@@ -31,7 +42,12 @@ exports.getAllAnswers = async (req, res, next) => {
       raw: true
     });
 
-    return res.status(200).json(ALL);
+    return res.status(200).json({
+      question: req.params.question_id,
+      page: req.query.page,
+      count: req.query.count,
+      results: ALL
+    });
   } catch (err) {
     console.log(err.message)
     return res.status(500).json(err);
@@ -106,5 +122,42 @@ exports.markQuestionHelpful = async (req, res, next) => {
     return res.status(204).end();
   } catch (err) {
     return res.status(500).json(err)
+  }
+}
+
+exports.reportQuestion = async (req, res, next) => {
+  try {
+    await Question.update({
+      helpful: sequelize.literal('reported + 1')
+      },
+      {
+        where: {
+          id: req.params.question_id
+        }
+    });
+    console.log('Successfully reported question');
+    return res.status(204).end();
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+}
+
+exports.markAnswerHelpful = async (req, res, next) => {
+  try {
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+}
+
+
+exports.reportAnswer = async (req, res, next) => {
+  try {
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
   }
 }
