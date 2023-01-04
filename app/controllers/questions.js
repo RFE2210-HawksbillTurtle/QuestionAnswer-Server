@@ -67,15 +67,18 @@ exports.addOneQuestion = async (req, res, next) => {
       helpful: 0
 
     });
-    console.log('Successfully added one question to the database');
-    return res.status(201).json(question);
+    if (question.id) {
+      console.log('Successfully added one question to the database');
+      return res.status(201).json(question);
+    }
   } catch (err) {
     return res.status(500).json(err);
   }
 }
 
 exports.addOneAnswer = async (req, res, next) => {
-  let date = Date.now()
+  let date = Date.now();
+  let photos = null;
   try {
     const result = await sequelize.transaction(async (t) => {
 
@@ -95,12 +98,11 @@ exports.addOneAnswer = async (req, res, next) => {
           arr.push({answer_id: answer.dataValues.id, url: req.body.photos[i]})
         }
 
-        await Photos.bulkCreate(arr, { transaction: t });
-
+       photos = await Photos.bulkCreate(arr, { transaction: t });
       }
-    })
 
-    console.log('Successfully added one answer to the database');
+     return photos !== null ? [answer, photos] : [answer]
+    })
     return res.status(201).json(result);
   } catch (err) {
     console.log(err)
@@ -118,8 +120,10 @@ exports.markQuestionHelpful = async (req, res, next) => {
           id: req.params.question_id
         }
     });
-    console.log('Successfully marked question as helpful');
-    return res.status(204).end();
+    if (Question[0] === 1) {
+      console.log('Successfully marked question as helpful');
+      return res.status(204).end();
+    }
   } catch (err) {
     return res.status(500).json(err)
   }
@@ -135,8 +139,10 @@ exports.reportQuestion = async (req, res, next) => {
           id: req.params.question_id
         }
     });
-    console.log('Successfully reported question');
-    return res.status(204).end();
+    if (Question[0] === 1) {
+      console.log('Successfully reported question');
+      return res.status(204).end();
+    }
   } catch (err) {
     console.log(err);
     return res.status(500).json(err);

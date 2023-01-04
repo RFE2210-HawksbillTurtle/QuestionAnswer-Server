@@ -2,19 +2,23 @@ const Answers = require('../models/answers');
 const sequelize = require('../util/database');
 
 exports.markAnswerHelpful = async (req, res, next) => {
+  console.log(req.params.answer_id)
   try {
-    await Answers.update({
+    let test = await Answers.update({
       helpful: sequelize.literal('helpful + 1')
       },
       {
         where: {
           id: req.params.answer_id
-        }
+        },
+        returning: true
     });
-    console.log('Successfully marked answer as helpful');
-    return res.status(204).end();
+    if (test[0] === 1) {
+      console.log('Successfully marked answer as helpful');
+      return res.status(204).end();
+    }
+    // throw 'Error Updating Answer'
   } catch (err) {
-    console.log(err);
     return res.status(500).json(err);
   }
 }
@@ -22,7 +26,7 @@ exports.markAnswerHelpful = async (req, res, next) => {
 
 exports.reportAnswer = async (req, res, next) => {
   try {
-    await Answers.update({
+    let report = await Answers.update({
       helpful: sequelize.literal('reported + 1')
       },
       {
@@ -30,8 +34,10 @@ exports.reportAnswer = async (req, res, next) => {
           id: req.params.answer_id
         }
     });
-    console.log('Successfully reported answer');
-    return res.status(204).end();
+    if (report[0] === 1) {
+      console.log('Successfully reported answer');
+      return res.status(204).end();
+    }
   } catch (err) {
     console.log(err);
     return res.status(500).json(err);
