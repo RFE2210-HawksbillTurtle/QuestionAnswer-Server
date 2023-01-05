@@ -15,7 +15,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.use('/qa/questions', require('./routes/questions.js'));
 app.use('/qa/answers', require('./routes/answers.js'));
 
@@ -29,7 +28,7 @@ app.use('/qa/answers', require('./routes/answers.js'));
     await sequelize.sync(
       {force: false}
     )
-    await app.listen(process.env.PORT);
+    await app.listen(process.env.SERVERPORT);
   } catch (err) {
     console.log(err);
   }
