@@ -2,12 +2,6 @@ const Sequelize = require('sequelize');
 const db = require('../util/database');
 
 const Question = db.define('questions', {
-  id: {
-    type: Sequelize.INTEGER,
-    primaryKey: true,
-    allowNull: false,
-    allowIncrememnt: true
-  },
   product_id: {
     type: Sequelize.INTEGER,
     allowNull: false,

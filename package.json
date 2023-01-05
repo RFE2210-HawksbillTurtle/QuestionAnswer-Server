@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server": "nodemon app/index.js"
+    "server": "nodemon app/index.js",
+    "test" : "mocha app/tests"
   },
   "repository": {
     "type": "git",
@@ -35,6 +36,7 @@
     "uninstall": "^0.0.0"
   },
   "devDependencies": {
+    "chakram": "^1.5.0",
     "nodemon": "^2.0.20"
   }
 }
