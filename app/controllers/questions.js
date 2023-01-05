@@ -10,11 +10,12 @@ exports.getAllQs = async (req, res, next) => {
     const { page, count } = req.query;
     const ALL = await Question.findAll({
       limit: count,
-      offset: page,
       where: {
         product_id: Number(req.params.product_id)
       },
-      raw: true
+      raw: true,
+      // benchmark: true,
+      // logging: console.log
     });
 
 
@@ -33,13 +34,17 @@ exports.getAllQs = async (req, res, next) => {
 };
 
 exports.getAllAnswers = async (req, res, next) => {
-  console.log(req.params);
   try {
+    let { page, count } = req.query;
+    count ? count : count = 5
     const ALL = await Question.findAll({
+      limit: count,
       where: {
         product_id: Number(req.params.question_id)
       },
-      raw: true
+      raw: true,
+      // benchmark: true,
+      // logging: console.log
     });
 
     return res.status(200).json({
@@ -66,7 +71,11 @@ exports.addOneQuestion = async (req, res, next) => {
       reported: 0,
       helpful: 0
 
+    }, {
+      benchmark: true,
+      logging: console.log
     });
+
     if (question.id) {
       console.log('Successfully added one question to the database');
       return res.status(201).json(question);
@@ -90,7 +99,10 @@ exports.addOneAnswer = async (req, res, next) => {
         answerer_email: req.body.email,
         reported: 0,
         helpful: 0
-      }, { transaction: t });
+      }, { transaction: t,
+          benchmark: true,
+          logging: console.log
+        });
 
       if (req.body.photos.length > 0) {
         let arr = [];
@@ -98,7 +110,11 @@ exports.addOneAnswer = async (req, res, next) => {
           arr.push({answer_id: answer.dataValues.id, url: req.body.photos[i]})
         }
 
-       photos = await Photos.bulkCreate(arr, { transaction: t });
+        photos = await Photos.bulkCreate(arr, {
+          transaction: t,
+          benchmark: true,
+          logging: console.log
+        });
       }
 
      return photos !== null ? [answer, photos] : [answer]
